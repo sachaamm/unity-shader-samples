@@ -4,25 +4,18 @@ Shader "Tuto/Unlit/10_ThunderTest"
    Properties
 	{
 		_Color ("Color", Color) = (1,1,1,1)
-		_XOffset ("XOffset", Range(0,1)) = 1
+		_Factor ("Factor", Range(0,1000)) = 1
 		_FrequencyX ("FrequencyX", Range(0,1000)) = 10
 		_FrequencyY ("FrequencyY", Range(0,1000)) = 10
-		_FrequencyC ("FrequencyC", Range(0,10)) = 10
-		_FrequencyD ("FrequencyD", Range(-10,10)) = 0
 	}
 	SubShader
 	{
-		Tags { "Queue"="Transparent" }
+		Tags { "RenderType"="Opaque" }
 		LOD 100
 
 		Pass
 		{
 			Cull Off
-			
-			ZWrite Off // don't write to depth buffer 
-            // in order not to occlude other objects
-
-			Blend SrcAlpha OneMinusSrcAlpha // use alpha blending
 			
 			CGPROGRAM
 			#pragma vertex vert
@@ -47,8 +40,8 @@ Shader "Tuto/Unlit/10_ThunderTest"
 			
 			fixed4 _Color;
 			fixed4 _Color2;
-			fixed _XOffset;
-			fixed _FrequencyX, _FrequencyY, _FrequencyC, _FrequencyD;
+			fixed _Factor;
+			fixed _FrequencyX, _FrequencyY;
 			
 			
 			v2f vert (appdata v)
@@ -59,22 +52,21 @@ Shader "Tuto/Unlit/10_ThunderTest"
 				UNITY_TRANSFER_FOG(o,o.vertex);
 				return o;
 			}
-
-			float Remap (float value, float from1, float to1, float from2, float to2) {
-				return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
-			}
-   
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float frequencyB = sin(i.uv.y * _FrequencyY * 3.14);
-
-				float offset = _Time.w;
-				float t = cos( (i.uv.x + offset) * 3.14 * _FrequencyX ) * 0.5 + 0.5;
-
-				fixed4 val = _Color * frac(i.uv.x * _FrequencyX + i.uv.y * _FrequencyY + i.uv.x * _FrequencyC + offset);
+				// float valA = abs(cos(i.uv.xxxx * 3.1415926535897932384626433832795 * 2.0 * _Frequency));
+				// float valB = 1 - pow(valA.xxxx,_Factor);
 				
-				return clamp(min(val, frac(t + frequencyB)),0,1);
+				// float sine = sin(i.uv.x * _FrequencyX * 3.14) / sin(i.uv.x * _FrequencyY * 3.14);
+				float frequencyA = sin(i.uv.x * _FrequencyX * 3.14);
+				float frequencyB = sin(i.uv.y * _FrequencyY * 3.14);
+				
+				// float valA = abs(frequencyA * frequencyB);
+				float valA = frequencyA + frequencyB;
+				
+				return clamp(valA,0,1);
+				
 			}
 			ENDCG
 		}

@@ -4,25 +4,20 @@ Shader "Tuto/Unlit/10_ThunderTest"
    Properties
 	{
 		_Color ("Color", Color) = (1,1,1,1)
-		_XOffset ("XOffset", Range(0,1)) = 1
+		_Factor ("XOffset", Range(0,1)) = 1
 		_FrequencyX ("FrequencyX", Range(0,1000)) = 10
 		_FrequencyY ("FrequencyY", Range(0,1000)) = 10
-		_FrequencyC ("FrequencyC", Range(0,10)) = 10
-		_FrequencyD ("FrequencyD", Range(-10,10)) = 0
+		_FrequencyC ("FrequencyC", Range(0,1000)) = 10
+		_FrequencyD ("FrequencyD", Range(0,1000)) = 10
 	}
 	SubShader
 	{
-		Tags { "Queue"="Transparent" }
+		Tags { "RenderType"="Opaque" }
 		LOD 100
 
 		Pass
 		{
 			Cull Off
-			
-			ZWrite Off // don't write to depth buffer 
-            // in order not to occlude other objects
-
-			Blend SrcAlpha OneMinusSrcAlpha // use alpha blending
 			
 			CGPROGRAM
 			#pragma vertex vert
@@ -47,7 +42,7 @@ Shader "Tuto/Unlit/10_ThunderTest"
 			
 			fixed4 _Color;
 			fixed4 _Color2;
-			fixed _XOffset;
+			fixed _Factor;
 			fixed _FrequencyX, _FrequencyY, _FrequencyC, _FrequencyD;
 			
 			
@@ -67,14 +62,33 @@ Shader "Tuto/Unlit/10_ThunderTest"
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float frequencyB = sin(i.uv.y * _FrequencyY * 3.14);
-
-				float offset = _Time.w;
-				float t = cos( (i.uv.x + offset) * 3.14 * _FrequencyX ) * 0.5 + 0.5;
-
-				fixed4 val = _Color * frac(i.uv.x * _FrequencyX + i.uv.y * _FrequencyY + i.uv.x * _FrequencyC + offset);
+				// float valA = abs(cos(i.uv.xxxx * 3.1415926535897932384626433832795 * 2.0 * _Frequency));
+				// float valB = 1 - pow(valA.xxxx,_Factor);
 				
-				return clamp(min(val, frac(t + frequencyB)),0,1);
+				// float sine = sin(i.uv.x * _FrequencyX * 3.14) / sin(i.uv.x * _FrequencyY * 3.14);
+				float frequencyA = sin(i.uv.x * _FrequencyX * 3.14);
+				float frequencyB = sin(i.uv.y * _FrequencyY * 3.14);
+				
+				// float valA = abs(frequencyA * frequencyB);
+				float valA = frequencyA - 0.5;
+
+				float t = cos( (i.uv.x + _Factor) * 3.14 * _FrequencyX ) * 0.5 + 0.5;
+
+				float val = t - i.uv.y;
+
+				float u = cos(val);
+
+				float yAdd = sin(i.uv.y * 3.14);
+
+				// 0 : 0 / 0.5 : 1 / 1 : 0
+				
+				
+				return frac(i.uv.x * _FrequencyX + i.uv.y * _FrequencyY + cos(i.uv.x * _FrequencyD) * _FrequencyC);
+				
+				// fixed4 result = (i.uv.xy * clamp(t, 0,1)).xyxy;
+				//
+				// return result;
+				
 			}
 			ENDCG
 		}

@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 10_ThunderTest
-  m_Shader: {fileID: 4800000, guid: be5dd3595aec47a7adec256f8dfb5ef1, type: 3}
+  m_Name: X_GridC
+  m_Shader: {fileID: 4800000, guid: b0b2dfa8eb8b41daaf80f05729600abd, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -22,15 +22,9 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _Factor: 0
-    - _Frequency: 8
-    - _FrequencyC: 3.55
-    - _FrequencyD: -0.4
-    - _FrequencyX: 298
-    - _FrequencyY: 5
-    - _Height: 1
-    - _Width: 1
-    - _XOffset: 1
+    - _Factor: 1
+    - _FrequencyX: 8
+    - _FrequencyY: 8
     m_Colors:
-    - _Color: {r: 0.7386115, g: 0.6933962, b: 1, a: 1}
+    - _Color: {r: 0.1263532, g: 0.8962264, b: 0, a: 1}
   m_BuildTextureStacks: []
